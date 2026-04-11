@@ -5,6 +5,9 @@ CLAUDE.md
 __pycache__/
 *.py[cod]
 
+# IDEs
+.idea/
+
 # macOS
 .DS_Store
 __MACOSX/
