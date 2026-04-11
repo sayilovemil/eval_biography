@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# macOS
+.DS_Store
+__MACOSX/
+
+# Annotations (stored on S3)
+annotations/
+
+# Archives
+*.zip
