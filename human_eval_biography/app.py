@@ -27,6 +27,17 @@ st.markdown(
     [data-testid="stDecoration"] {display: none !important;}
     [class*="_profileContainer_"] {display: none !important;}
     </style>
+    <script>
+    (function() {
+        function hideProfile() {
+            document.querySelectorAll('[class*="_profileContainer_"]').forEach(function(el) {
+                el.style.setProperty('display', 'none', 'important');
+            });
+        }
+        hideProfile();
+        new MutationObserver(hideProfile).observe(document.documentElement, {childList: true, subtree: true});
+    })();
+    </script>
     """,
     unsafe_allow_html=True,
 )
