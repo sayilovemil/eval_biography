@@ -26,12 +26,23 @@ st.markdown(
     [data-testid="stStatusWidget"] {visibility: hidden !important;}
     [data-testid="stDecoration"] {display: none !important;}
     [class*="_profileContainer_"] {display: none !important;}
+    [class*="_profilePreview_"] {display: none !important;}
+    [class*="_viewerBadge_"] {display: none !important;}
+    [data-testid="manage-app-button"] {display: none !important;}
     </style>
     <script>
     (function() {
         function hideProfile() {
-            document.querySelectorAll('[class*="_profileContainer_"]').forEach(function(el) {
-                el.style.setProperty('display', 'none', 'important');
+            var selectors = [
+                '[class*="_profileContainer_"]',
+                '[class*="_profilePreview_"]',
+                '[class*="_viewerBadge_"]',
+                '[data-testid="manage-app-button"]',
+            ];
+            selectors.forEach(function(sel) {
+                document.querySelectorAll(sel).forEach(function(el) {
+                    el.style.setProperty('display', 'none', 'important');
+                });
             });
         }
         hideProfile();
