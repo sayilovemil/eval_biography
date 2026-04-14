@@ -18,6 +18,15 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+st.markdown(
+    """
+    <style>
+    [data-testid="stToolbar"] {visibility: hidden !important;}
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 
 ANNOTATION_OPTIONS = ["<Unlabeled>", "True", "Not a claim", "Almost"]
 CLAIM_FIELDS = ["subject", "predicate", "object", "time", "location", "reason", "manner", "hedge"]
