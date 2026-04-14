@@ -29,17 +29,31 @@ st.markdown(
     [class*="_profilePreview_"] {display: none !important;}
     [class*="_viewerBadge_"] {display: none !important;}
     [data-testid="manage-app-button"] {display: none !important;}
+    img[data-testid="appCreatorAvatar"] {display: none !important;}
     </style>
     <script>
     (function() {
         function hideProfile() {
-            var selectors = [
+            // Remonte depuis l'avatar pour cacher tout le container
+            document.querySelectorAll('[data-testid="appCreatorAvatar"]').forEach(function(img) {
+                var el = img;
+                for (var i = 0; i < 5; i++) {
+                    if (!el.parentElement) break;
+                    el = el.parentElement;
+                    if (el.className && typeof el.className === 'string' && el.className.indexOf('_profileContainer_') !== -1) {
+                        el.style.setProperty('display', 'none', 'important');
+                        break;
+                    }
+                }
+                img.style.setProperty('display', 'none', 'important');
+            });
+            // Sélecteurs directs en fallback
+            [
                 '[class*="_profileContainer_"]',
                 '[class*="_profilePreview_"]',
                 '[class*="_viewerBadge_"]',
                 '[data-testid="manage-app-button"]',
-            ];
-            selectors.forEach(function(sel) {
+            ].forEach(function(sel) {
                 document.querySelectorAll(sel).forEach(function(el) {
                     el.style.setProperty('display', 'none', 'important');
                 });
