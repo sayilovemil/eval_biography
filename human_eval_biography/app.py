@@ -22,6 +22,8 @@ st.markdown(
     """
     <style>
     [data-testid="stToolbar"] {visibility: hidden !important;}
+    footer {visibility: hidden !important;}
+    [data-testid="stStatusWidget"] {visibility: hidden !important;}
     </style>
     """,
     unsafe_allow_html=True,
