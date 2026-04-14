@@ -8,6 +8,7 @@ from typing import Any
 
 import boto3
 import streamlit as st
+import streamlit.components.v1 as components
 from botocore.exceptions import ClientError
 
 
@@ -30,41 +31,56 @@ st.markdown(
     [class*="_viewerBadge_"] {display: none !important;}
     [data-testid="manage-app-button"] {display: none !important;}
     img[data-testid="appCreatorAvatar"] {display: none !important;}
+    a[href*="share.streamlit.io/user/"] {display: none !important;}
     </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Le badge profil est injecté dans la page parente (hors du DOM de st.markdown).
+# components.html crée un vrai iframe dont les scripts s'exécutent,
+# et window.parent permet d'accéder au document parent (même origine).
+components.html(
+    """
     <script>
     (function() {
-        function hideProfile() {
-            // Remonte depuis l'avatar pour cacher tout le container
-            document.querySelectorAll('[data-testid="appCreatorAvatar"]').forEach(function(img) {
-                var el = img;
-                for (var i = 0; i < 5; i++) {
-                    if (!el.parentElement) break;
-                    el = el.parentElement;
-                    if (el.className && typeof el.className === 'string' && el.className.indexOf('_profileContainer_') !== -1) {
-                        el.style.setProperty('display', 'none', 'important');
-                        break;
-                    }
-                }
-                img.style.setProperty('display', 'none', 'important');
-            });
-            // Sélecteurs directs en fallback
+        function hide(doc) {
             [
+                '[data-testid="appCreatorAvatar"]',
                 '[class*="_profileContainer_"]',
                 '[class*="_profilePreview_"]',
-                '[class*="_viewerBadge_"]',
-                '[data-testid="manage-app-button"]',
+                'a[href*="share.streamlit.io/user/"]',
             ].forEach(function(sel) {
-                document.querySelectorAll(sel).forEach(function(el) {
-                    el.style.setProperty('display', 'none', 'important');
+                doc.querySelectorAll(sel).forEach(function(el) {
+                    var container = el;
+                    for (var i = 0; i < 6; i++) {
+                        container.style.setProperty('display', 'none', 'important');
+                        if (!container.parentElement) break;
+                        container = container.parentElement;
+                        if (container.className && typeof container.className === 'string'
+                                && container.className.indexOf('_profileContainer_') !== -1) {
+                            container.style.setProperty('display', 'none', 'important');
+                            break;
+                        }
+                    }
                 });
             });
         }
-        hideProfile();
-        new MutationObserver(hideProfile).observe(document.documentElement, {childList: true, subtree: true});
+        function run() {
+            try { hide(window.parent.document); } catch(e) {}
+            try { hide(document); } catch(e) {}
+        }
+        run();
+        try {
+            new MutationObserver(run).observe(
+                window.parent.document.documentElement,
+                {childList: true, subtree: true}
+            );
+        } catch(e) {}
     })();
     </script>
     """,
-    unsafe_allow_html=True,
+    height=0,
 )
 
 
