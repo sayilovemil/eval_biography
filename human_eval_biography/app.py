@@ -19,64 +19,27 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-st.markdown(
-    """
-    <style>
-    [data-testid="stToolbar"] {visibility: hidden !important;}
-    footer {visibility: hidden !important;}
-    [data-testid="stStatusWidget"] {visibility: hidden !important;}
-    [data-testid="stDecoration"] {display: none !important;}
-    [class*="_profileContainer_"] {display: none !important;}
-    [class*="_profilePreview_"] {display: none !important;}
-    [class*="_viewerBadge_"] {display: none !important;}
-    [data-testid="manage-app-button"] {display: none !important;}
-    img[data-testid="appCreatorAvatar"] {display: none !important;}
-    a[href*="share.streamlit.io/user/"] {display: none !important;}
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# Le badge profil est injecté dans la page parente (hors du DOM de st.markdown).
-# components.html crée un vrai iframe dont les scripts s'exécutent,
-# et window.parent permet d'accéder au document parent (même origine).
 components.html(
     """
     <script>
     (function() {
-        function hide(doc) {
-            [
-                '[data-testid="appCreatorAvatar"]',
-                '[class*="_profileContainer_"]',
-                '[class*="_profilePreview_"]',
-                'a[href*="share.streamlit.io/user/"]',
-            ].forEach(function(sel) {
-                doc.querySelectorAll(sel).forEach(function(el) {
-                    var container = el;
-                    for (var i = 0; i < 6; i++) {
-                        container.style.setProperty('display', 'none', 'important');
-                        if (!container.parentElement) break;
-                        container = container.parentElement;
-                        if (container.className && typeof container.className === 'string'
-                                && container.className.indexOf('_profileContainer_') !== -1) {
-                            container.style.setProperty('display', 'none', 'important');
-                            break;
-                        }
-                    }
-                });
-            });
+        var css = [
+            '[class*="_profileContainer_"] { display: none !important; }',
+            '[class*="_profilePreview_"] { display: none !important; }',
+            'img[data-testid="appCreatorAvatar"] { display: none !important; }',
+            'a[href*="share.streamlit.io/user/"] { display: none !important; }',
+        ].join('\\n');
+
+        function injectStyle(doc) {
+            if (!doc || doc.getElementById('hide-profile-badge')) return;
+            var s = doc.createElement('style');
+            s.id = 'hide-profile-badge';
+            s.textContent = css;
+            (doc.head || doc.documentElement).appendChild(s);
         }
-        function run() {
-            try { hide(window.parent.document); } catch(e) {}
-            try { hide(document); } catch(e) {}
-        }
-        run();
-        try {
-            new MutationObserver(run).observe(
-                window.parent.document.documentElement,
-                {childList: true, subtree: true}
-            );
-        } catch(e) {}
+
+        try { injectStyle(document); } catch(e) {}
+        try { injectStyle(window.parent.document); } catch(e) {}
     })();
     </script>
     """,
