@@ -8,7 +8,6 @@ from typing import Any
 
 import boto3
 import streamlit as st
-import streamlit.components.v1 as components
 from botocore.exceptions import ClientError
 
 
@@ -17,33 +16,6 @@ st.set_page_config(
     page_icon="🧾",
     layout="wide",
     initial_sidebar_state="expanded",
-)
-
-components.html(
-    """
-    <script>
-    (function() {
-        var css = [
-            '[class*="_profileContainer_"] { display: none !important; }',
-            '[class*="_profilePreview_"] { display: none !important; }',
-            'img[data-testid="appCreatorAvatar"] { display: none !important; }',
-            'a[href*="share.streamlit.io/user/"] { display: none !important; }',
-        ].join('\\n');
-
-        function injectStyle(doc) {
-            if (!doc || doc.getElementById('hide-profile-badge')) return;
-            var s = doc.createElement('style');
-            s.id = 'hide-profile-badge';
-            s.textContent = css;
-            (doc.head || doc.documentElement).appendChild(s);
-        }
-
-        try { injectStyle(document); } catch(e) {}
-        try { injectStyle(window.parent.document); } catch(e) {}
-    })();
-    </script>
-    """,
-    height=0,
 )
 
 
